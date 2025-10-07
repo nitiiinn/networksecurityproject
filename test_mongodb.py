@@ -1,14 +1,15 @@
-
 from pymongo.mongo_client import MongoClient
+import certifi
 
+# Connection URI
 uri = "mongodb+srv://nitin77kothiyal_db_user:admin123456@cluster0.ndfyvrs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
-# Create a new client and connect to the server
-client = MongoClient(uri)
+# Create a new client with TLS certificate
+client = MongoClient(uri, tlsCAFile=certifi.where())
 
-# Send a ping to confirm a successful connection
+# Test connection
 try:
     client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
+    print("✅ Pinged your MongoDB deployment successfully!")
 except Exception as e:
-    print(e)
+    print("❌ Connection failed:", e)
