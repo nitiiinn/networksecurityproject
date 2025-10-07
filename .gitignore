@@ -1,2 +1,4 @@
 myenv
 .env
+# Ignore log files and logs folder
+logs/
