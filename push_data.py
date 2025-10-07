@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MONGO_DB_URL=os.getenv("MONGO_DB_URL")
-print(MONGO_DB_URL)
+# Do not print the full URL (may contain credentials)
+if not MONGO_DB_URL:
+    print("MONGO_DB_URL not set in environment (.env) - set it before running the script")
 
 import certifi
 ca=certifi.where()
@@ -35,18 +37,19 @@ class NetworkDataExtract:
     
     def insert_data_to_mongodb(self,records,database,collection):
         try:
-            self.database=database
-            self.collection=collection
+            # preserve provided names but use local variables for DB/collection objects
+            self.database = database
+            self.collection = collection
             self.client = pymongo.MongoClient(MONGO_DB_URL, tlsCAFile=ca, serverSelectionTimeoutMS=5000)
-            self.database=self.mongo_client[self.database]
-            self.collection=self.database[self.collection]
-            self.collection.insert_many(records)
-            return(len(self.records))
+            db = self.client[self.database]
+            coll = db[self.collection]
+            coll.insert_many(records)
+            return len(records)
         except Exception as e:
             raise NetworkSecurityException(e,sys)
         
 if __name__=="__main__":
-    FILE_PATH="Network_Data/phisingData.csv"
+    FILE_PATH = os.path.join("Network_Data", "phisingData.csv")
     DATABASE="STARKK"
     Collection="NetworkData"
     obj=NetworkDataExtract()
