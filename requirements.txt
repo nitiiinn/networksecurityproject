@@ -7,3 +7,5 @@ certifi
 scikit-learn
 mlflow
 pyaml
+fastapi
+uvicorn
